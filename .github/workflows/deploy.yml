@@ -1,0 +1,24 @@
+name: Deploy FastAPI to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Connect and deploy to EC2
+        uses: appleboy/ssh-action@v0.1.10
+
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /var/www/fastapi_blog
+            git pull origin main
+            chmod +x deploy.sh
+            ./deploy.sh
