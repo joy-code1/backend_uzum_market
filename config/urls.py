@@ -1,5 +1,3 @@
-"""Маршруты API (§5 ТЗ). Все эндпоинты под /api/, плюс /products/gen/* и админка."""
-
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
