@@ -13,6 +13,7 @@ from rest_framework import permissions, serializers, status
 from rest_framework.exceptions import NotAuthenticated, PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view
 
 from apps.core.cache import cache_private, cache_public
 from apps.core.pagination import EnvelopePagination
@@ -43,6 +44,12 @@ def get_object_or_404_or_none(model_or_qs, **kwargs):
         return qs.get(**kwargs)
     except qs.model.DoesNotExist:
         return None
+
+@api_view(['GET'])
+def getProducts(request):
+    products = Product.objects.all()
+    serializer = ProductSerializer(products, many=True)
+    return Response(serializer.data)
 
 
 # --------------------------------------------------------------------- категории

@@ -14,11 +14,11 @@ from .views import (
     ReviewReplyView,
     SellerDetailView,
     SellersView,
+    getProducts,
 )
 
 urlpatterns = [
-    # /products/mine/ регистрируем ДО /products/{id_or_slug}/ — «mine» не должен
-    # интерпретироваться как слаг.
+    path("/", view=getProducts),
     path("products/mine/", ProductMineView.as_view(), name="product-mine"),
     path("products/", ProductsView.as_view(), name="products"),
     path("products/<str:id_or_slug>/", ProductDetailView.as_view(), name="product-detail"),
