@@ -1,0 +1,44 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    env:
+      DATABASE_URL: sqlite:////tmp/ci.sqlite3
+      SECRET_KEY: ci-only-secret-key-not-used-in-production-0123456789
+      DEBUG: "False"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+          cache: pip
+
+      - name: Установка зависимостей
+        run: pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
+
+      - name: Линтер (ruff check)
+        run: ruff check .
+
+      - name: Проверка форматирования (ruff format)
+        run: ruff format --check .
+
+      - name: Проверка конфигурации Django
+        run: python manage.py check
+
+      - name: Проверка миграций (drift check)
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Проверка OpenAPI схемы
+        run: python manage.py spectacular --file /tmp/schema.yml --validate --fail-on-warn
+
+      - name: Запуск тестов (pytest)
+        run: pytest
