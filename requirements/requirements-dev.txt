@@ -4,5 +4,9 @@
 
 ruff==0.16.5
 
+# Тесты (см. pytest.ini: DJANGO_SETTINGS_MODULE = config.test_settings).
+pytest==9.1.1
+pytest-django==4.14.0
+
 # Для scripts/e2e.py — сквозная проверка контракта после деплоя.
 requests==2.32.5
