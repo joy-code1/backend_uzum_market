@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.urls import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
-from apps.core.views import DemoResetView, HealthView
+from apps.core.views import DemoResetView, HealthView, HelloView, PingView, TestView
 from apps.products.gen_media import SeedMediaView
 
 urlpatterns = [
@@ -14,6 +14,9 @@ urlpatterns = [
     path("api/", include("apps.orders.urls")),
     path("api/", include("apps.uploads.urls")),
     path("api/health", HealthView.as_view(), name="health"),
+    path("api/ping/", PingView.as_view(), name="ping"),
+    path("api/test/", TestView.as_view(), name="test"),
+    path("api/hello/", HelloView.as_view(), name="hello"),
     path("api/demo/reset/", DemoResetView.as_view(), name="demo-reset"),
     path("products/gen/<str:name>", SeedMediaView.as_view(), name="seed-media"),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),

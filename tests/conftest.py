@@ -55,7 +55,7 @@ def api_client() -> APIClient:
 def auth_client(db) -> APIClient:
     """Авторизованный API-клиент (покупатель)."""
     client = APIClient()
-    user = User.objects.create_user(
+    User.objects.create_user(
         email="buyer@test.uz",
         password=PASSWORD,
         first_name="Тест",
@@ -90,7 +90,7 @@ def seller_user(db):
 @pytest.fixture
 def seller_client(db, seller_user) -> APIClient:
     """Авторизованный API-клиент продавца."""
-    user, seller = seller_user
+    _user, _seller = seller_user
     client = APIClient()
     csrf = get_csrf(client)
     resp = client.post(
@@ -137,9 +137,8 @@ def product(db, category, seller) -> Product:
         delivery_time="1–2 дня",
         brand="Samsung",
         images=["/products/gen/a-1.svg"],
-        characteristics={"Экран": "6.7\"", "Память": "128 ГБ"},
+        characteristics={"Экран": '6.7"', "Память": "128 ГБ"},
         category=category,
         seller=seller,
         status=Product.Status.ACTIVE,
     )
-

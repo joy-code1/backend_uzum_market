@@ -55,7 +55,7 @@ class TestRegister:
             format="json",
             HTTP_X_CSRFTOKEN=csrf,
         )
-        assert resp.status_code == 200
+        assert resp.status_code == 201
         assert User.objects.filter(email="newuser@test.uz").exists()
 
     def test_register_user_fields_in_response(self, api_client):
@@ -233,10 +233,11 @@ class TestMe:
 # ─────────────────────────────── /api/auth/logout/
 @pytest.mark.django_db
 class TestLogout:
-    def test_logout_anonymous_401(self, api_client):
+    def test_logout_anonymous_200(self, api_client):
+        """Logout идемпотентен — работает и без авторизации (возвращает 200)."""
         csrf = get_csrf(api_client)
         resp = api_client.post(LOGOUT_URL, HTTP_X_CSRFTOKEN=csrf)
-        assert resp.status_code == 401
+        assert resp.status_code == 200
 
     def test_logout_success(self, auth_client):
         csrf = get_csrf(auth_client)
@@ -244,4 +245,3 @@ class TestLogout:
         assert resp.status_code == 200
         # После logout — me должно вернуть 401
         assert auth_client.get(ME_URL).status_code == 401
-

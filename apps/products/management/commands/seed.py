@@ -67,7 +67,7 @@ class Command(BaseCommand):
             from apps.uploads.models import MediaFile
 
             MediaFile.objects.all().delete()
-        except Exception:
+        except Exception:  # noqa: S110
             pass
         User.objects.filter(is_staff=False, is_superuser=False).delete()
         self.stdout.write("Старые данные удалены.")

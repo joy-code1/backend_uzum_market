@@ -25,6 +25,7 @@ ignore = [
 
 [lint.per-file-ignores]
 "*/tests.py" = ["S105", "S106", "B011"]
+"tests/**/*.py" = ["S105", "S110"]
 "config/test_settings.py" = ["F401", "F403", "E402"]
 "manage.py" = ["EXE001"]
 

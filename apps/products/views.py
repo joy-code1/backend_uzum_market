@@ -10,10 +10,10 @@ from django.db.models import Case, Count, F, FloatField, Max, Min, Q, Value, Whe
 from django.http import Http404
 from drf_spectacular.utils import extend_schema
 from rest_framework import permissions, serializers, status
+from rest_framework.decorators import api_view
 from rest_framework.exceptions import NotAuthenticated, PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.decorators import api_view
 
 from apps.core.cache import cache_private, cache_public
 from apps.core.pagination import EnvelopePagination
@@ -45,7 +45,8 @@ def get_object_or_404_or_none(model_or_qs, **kwargs):
     except qs.model.DoesNotExist:
         return None
 
-@api_view(['GET'])
+
+@api_view(["GET"])
 def getProducts(request):
     products = Product.objects.all()
     serializer = ProductSerializer(products, many=True)
@@ -616,10 +617,18 @@ def batch_verified_map(product, user_ids):
 
 
 class ReviewDetailView(APIView):
-    """DELETE /api/reviews/{id}/ — автор или владелец магазина (§5.4 ТЗ)."""
+    """GET/DELETE /api/reviews/{id}/ — детали отзыва или удаление (§5.4 ТЗ)."""
 
     serializer_class = serializers.Serializer
     permission_classes = [permissions.AllowAny]
+
+    @extend_schema(tags=["reviews"], responses={200: None, 404: None})
+    def get(self, request, review_id: int):
+        review = get_object_or_404_or_none(Review.objects.select_related("user", "product"), pk=review_id)
+        if review is None:
+            raise Http404("Отзыв не найден.")
+        data = ReviewSerializer(review, context={"request": request}).data
+        return Response(data)
 
     @extend_schema(tags=["reviews"], responses={200: None, 403: None, 404: None})
     def delete(self, request, review_id: int):

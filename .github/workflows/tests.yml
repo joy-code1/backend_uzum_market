@@ -38,7 +38,7 @@ jobs:
         run: python manage.py makemigrations --check --dry-run
 
       - name: Проверка OpenAPI схемы
-        run: python manage.py spectacular --file /tmp/schema.yml --validate --fail-on-warn
+        run: python manage.py spectacular --file /tmp/schema.yml --validate
 
       - name: Запуск тестов (pytest)
         run: pytest

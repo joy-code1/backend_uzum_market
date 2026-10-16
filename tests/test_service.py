@@ -70,8 +70,9 @@ class TestPing:
 # ─────────────────────────────── /api/test/
 @pytest.mark.django_db
 class TestServiceEndpoint:
-    def test_get_returns_200(self, api_client):
-        resp = api_client.get("/api/test/")
+    def test_post_returns_200(self, api_client):
+        csrf = api_client.get("/api/auth/csrf/").json()["csrf"]
+        resp = api_client.post("/api/test/", {"key": "value"}, format="json", HTTP_X_CSRFTOKEN=csrf)
         assert resp.status_code == 200
 
     def test_get_response_fields(self, api_client):
@@ -82,14 +83,11 @@ class TestServiceEndpoint:
         assert "environment" in data
         assert "time" in data
 
-    def test_post_returns_200(self, api_client):
-        resp = api_client.post("/api/test/", {"key": "value"}, format="json")
-        assert resp.status_code == 200
-
     def test_post_echoes_data(self, api_client):
         """POST должен возвращать переданные данные в поле received_data."""
         payload = {"foo": "bar", "num": 42}
-        data = api_client.post("/api/test/", payload, format="json").json()
+        csrf = api_client.get("/api/auth/csrf/").json()["csrf"]
+        data = api_client.post("/api/test/", payload, format="json", HTTP_X_CSRFTOKEN=csrf).json()
         assert data["status"] == "success"
         assert data["received_data"] == payload
 
@@ -113,4 +111,3 @@ class TestHello:
         data = api_client.get("/api/hello/").json()
         assert "message" in data
         assert len(data["message"]) > 0
-
